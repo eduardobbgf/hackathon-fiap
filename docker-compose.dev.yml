@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: fiap-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fiap_video_db_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - fiap-dev-network
+
+  # Redis para cache e sessões
+  redis:
+    image: redis:7-alpine
+    container_name: fiap-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - fiap-dev-network
+
+  # RabbitMQ para mensageria
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fiap-rabbitmq-dev
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_dev_data:/var/lib/rabbitmq
+    networks:
+      - fiap-dev-network
+
+  # User Service - Desenvolvimento
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.user-service
+      target: builder
+    container_name: fiap-user-service-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: fiap_video_db_dev
+      JWT_ACCESS_SECRET: dev-access-secret
+      JWT_REFRESH_SECRET: dev-refresh-secret
+      JWT_ACCESS_EXPIRES_IN: 1h
+      JWT_REFRESH_EXPIRES_IN: 7d
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3000:3000"
+      - "9229:9229" # Debug port
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - fiap-dev-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs/user-service-dev:/app/logs
+    command: npm run start:debug
+
+  # Video Service - Desenvolvimento
+  video-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.video-service
+      target: builder
+    container_name: fiap-video-service-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: fiap_video_db_dev
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+      UPLOAD_PATH: /app/uploads
+      TEMP_PATH: /app/temp
+      OUTPUT_PATH: /app/outputs
+      MAX_FILE_SIZE: 100MB
+      ALLOWED_FORMATS: mp4,avi,mov,mkv,wmv,flv,webm
+    ports:
+      - "3001:3001"
+      - "9230:9229" # Debug port
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - fiap-dev-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+      - ./temp:/app/temp
+      - ./outputs:/app/outputs
+      - ./logs/video-service-dev:/app/logs
+    command: npm run start:debug
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  rabbitmq_dev_data:
+    driver: local
+
+networks:
+  fiap-dev-network:
+    driver: bridge
