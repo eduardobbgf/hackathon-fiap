@@ -1,29 +1,35 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-@Entity('users')
+@Entity("users")
 export class UserEntity {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn("uuid")
   id: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: "varchar", length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
+  @Column({ type: "varchar", length: 255, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: "varchar", length: 255 })
   password: string;
 
-  @Column({ 
-    type: 'enum', 
-    enum: ['active', 'inactive', 'suspended'],
-    default: 'active'
+  @Column({
+    type: "enum",
+    enum: ["active", "inactive", "suspended"],
+    default: "active",
   })
   status: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

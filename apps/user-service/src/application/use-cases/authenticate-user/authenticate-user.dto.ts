@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class AuthenticateUserDto {
   @IsNotEmpty()
@@ -11,7 +11,7 @@ export class AuthenticateUserDto {
 }
 
 export class AuthenticateUserResponseDto {
-  accessToken: string;
+  accessToken?: string;
   refreshToken?: string;
   user: {
     id: string;

@@ -1,17 +1,17 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { UserModule } from './infrastructure/modules/user.module';
-import { DatabaseModule } from './infrastructure/database/database.module';
-import { AuthModule } from './infrastructure/auth/auth.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { UserModule } from "./infrastructure/modules/user.module";
+import { DatabaseModule } from "./infrastructure/database/database.module";
+import { AuthLibModule } from "@app/auth-lib";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: [".env.local", ".env"],
     }),
     DatabaseModule,
-    AuthModule,
+    AuthLibModule,
     UserModule,
   ],
 })

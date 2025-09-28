@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { IUserRepository, User, Email, UserStatus } from '../../../domain';
-import { Password } from '../../../domain/value-objects/password.vo';
-import { UserEntity } from '../entities/user.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { IUserRepository, User, Email, UserStatus } from "../../../domain";
+import { Password } from "../../../domain/value-objects/password.vo";
+import { UserEntity } from "../entities/user.entity";
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly repository: Repository<UserEntity>
+    private readonly repository: Repository<UserEntity>,
   ) {}
 
   async findById(id: string): Promise<User | null> {
@@ -19,7 +19,7 @@ export class UserRepository implements IUserRepository {
 
   async findAll(): Promise<User[]> {
     const entities = await this.repository.find();
-    return entities.map(entity => this.toDomain(entity));
+    return entities.map((entity) => this.toDomain(entity));
   }
 
   async save(user: User): Promise<User> {
@@ -44,30 +44,36 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: Email): Promise<User | null> {
-    const entity = await this.repository.findOne({ where: { email: email.value } });
+    const entity = await this.repository.findOne({
+      where: { email: email.value },
+    });
     return entity ? this.toDomain(entity) : null;
   }
 
   async existsByEmail(email: Email): Promise<boolean> {
-    const count = await this.repository.count({ where: { email: email.value } });
+    const count = await this.repository.count({
+      where: { email: email.value },
+    });
     return count > 0;
   }
 
   async findActiveUsers(): Promise<User[]> {
-    const entities = await this.repository.find({ where: { status: 'active' } });
-    return entities.map(entity => this.toDomain(entity));
+    const entities = await this.repository.find({
+      where: { status: "active" },
+    });
+    return entities.map((entity) => this.toDomain(entity));
   }
 
   private toDomain(entity: UserEntity): User {
     const email = new Email(entity.email);
     const password = Password.fromHash(entity.password);
-    
+
     const user = new User(
       entity.name,
       email,
       password,
       entity.id,
-      entity.status as UserStatus
+      entity.status as UserStatus,
     );
 
     // Definir as datas manualmente pois o construtor cria novas datas
@@ -85,7 +91,7 @@ export class UserRepository implements IUserRepository {
       password: user.password.hashedValue,
       status: user.status,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     };
   }
 }

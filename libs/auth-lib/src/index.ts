@@ -4,5 +4,6 @@ export * from "./auth-lib.service";
 
 export * from "./auth-lib.module";
 export * from "./guards/jwt-auth.guard";
+export * from "./strategies/jwt.strategy";
 export * from "./decorators/get-user.decorator";
 export * from "./decorators/current-user.decorator";
