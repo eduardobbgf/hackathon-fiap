@@ -9,9 +9,16 @@ import { GetUserUseCase } from "../../application/use-cases/get-user/get-user.us
 import { UpdateUserUseCase } from "../../application/use-cases/update-user/update-user.use-case";
 import { IUserService } from "../../application/ports/user.service.interface";
 import { CreateUserUseCase } from "../../application/use-cases/create-user/create-user.use-case";
+import { ConfigModule } from "@nestjs/config";
+import { AuthLibModule } from "@app/auth-lib"; // Importe a lib pelo alias do tsconfig
 
 @Module({
-  imports: [DatabaseModule, AuthModule], // <-- Removido AuthenticateUserUseCase
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthLibModule,
+    DatabaseModule,
+    AuthModule,
+  ], // <-- Removido AuthenticateUserUseCase
   controllers: [UserController, AuthController],
   providers: [
     AuthenticateUserUseCase,

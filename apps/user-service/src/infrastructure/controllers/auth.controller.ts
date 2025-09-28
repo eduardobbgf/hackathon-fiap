@@ -12,8 +12,8 @@ import {
   AuthenticateUserDto,
   AuthenticateUserResponseDto,
 } from "../../application";
-import { LocalAuthGuard } from "../auth/guards/local-auth.guard";
-import { Public } from "../auth/decorators/public.decorator";
+import { Public } from "@app/auth-lib";
+import { LocalAuthGuard } from "@app/auth-lib/guards/local-auth.guard";
 
 @Controller("auth")
 export class AuthController {

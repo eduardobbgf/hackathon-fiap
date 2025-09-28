@@ -20,12 +20,12 @@ import {
   UpdateUserDto,
   UpdateUserResponseDto,
 } from "../../application";
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import {
   CurrentUser,
   CurrentUserData,
-} from "../auth/decorators/current-user.decorator";
-import { Public } from "../auth/decorators/public.decorator";
+  JwtAuthGuard,
+  Public,
+} from "@app/auth-lib";
 
 @Controller("users")
 @UseGuards(JwtAuthGuard)

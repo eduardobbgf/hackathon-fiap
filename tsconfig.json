@@ -18,8 +18,18 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/shared": ["libs/shared/src"],
-      "@app/shared/*": ["libs/shared/src/*"]
+      "@app/shared": [
+        "libs/shared/src"
+      ],
+      "@app/shared/*": [
+        "libs/shared/src/*"
+      ],
+      "@app/auth-lib": [
+        "libs/auth-lib/src"
+      ],
+      "@app/auth-lib/*": [
+        "libs/auth-lib/src/*"
+      ]
     }
   },
   "include": [
