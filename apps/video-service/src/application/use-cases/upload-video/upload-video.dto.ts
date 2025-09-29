@@ -5,9 +5,6 @@ export class UploadVideoDto {
   @IsNotEmpty()
   @IsUUID()
   userId: string;
-
-  @IsString()
-  token?: string;
 }
 // DTO de Resposta: Dados retornados ao cliente após o upload
 export class UploadVideoResponseDto {

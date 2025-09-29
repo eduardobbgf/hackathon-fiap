@@ -11,7 +11,6 @@ import { UUID } from "crypto";
 export interface UploadVideoRequest {
   file: Express.Multer.File;
   userId: string;
-  token: string;
 }
 
 @Injectable()
@@ -28,19 +27,12 @@ export class UploadVideoUseCase
   ) {}
 
   async execute(request: UploadVideoRequest): Promise<UploadVideoResponseDto> {
-    const { file, userId, token } = request;
+    const { file, userId } = request;
 
-    // 1. Validação de negócio: verificar se o usuário existe
-    const user = await this.userServiceClient.findUserById(userId, token);
-    if (!user) {
-      throw new BusinessRuleViolationException("User not found.");
-    }
     const filename = `${uuidv4()}-${file.originalname}`;
 
-    // 1. Armazenar o arquivo
     const filePath = await this.fileStorageService.upload(file, filename);
 
-    // 2. Criar a entidade de domínio
     const newVideo = Video.create({
       id: uuidv4(),
       filename: filePath,
@@ -49,10 +41,8 @@ export class UploadVideoUseCase
       userId: userId,
     });
 
-    // 3. Persistir a entidade
     const savedVideo = await this.videoRepository.save(newVideo);
 
-    // 4. Retornar a resposta
     return {
       id: savedVideo.id,
       originalName: savedVideo.originalName,

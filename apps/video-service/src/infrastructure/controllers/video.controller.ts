@@ -33,6 +33,7 @@ import {
   DownloadFramesUseCase,
   GetVideoStatusResponseDto,
 } from "../../application";
+import { JwtAuthGuard } from "@app/auth-lib";
 
 @Controller("videos")
 // @UseGuards(AuthGuard("jwt")) // Protege todas as rotas do controlador
@@ -45,6 +46,7 @@ export class VideoController {
   ) {}
 
   @Post("upload")
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor("file")) // 'file' é o nome do campo no formulário
   async uploadVideo(
     @UploadedFile() file: Express.Multer.File,
@@ -55,7 +57,6 @@ export class VideoController {
     const request = {
       file, // o objeto de arquivo
       userId: body.userId,
-      token: body.token,
     };
 
     return this.uploadVideoUseCase.execute(request);

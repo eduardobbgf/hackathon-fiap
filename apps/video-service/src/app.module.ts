@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { VideoModule } from "./infrastructure/modules/video.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
 import databaseConfig from "./infrastructure/config/database.config";
+import { AuthLibModule } from "@app/auth-lib";
 
 // O AppMdule agora importa apenas os módulos de DENTRO do seu serviço
 
@@ -27,6 +28,7 @@ import databaseConfig from "./infrastructure/config/database.config";
     // 2. Configura a conexão global do banco de dados para ESTE serviço
 
     DatabaseModule, // Usa o módulo centralizado de banco de dados
+    AuthLibModule,
     // 3. Importa o módulo principal de funcionalidades deste serviço
     VideoModule,
   ],
