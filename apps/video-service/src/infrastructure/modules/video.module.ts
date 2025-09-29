@@ -23,12 +23,14 @@ import { VideoProcessingWorker } from "../workers/video-processing.worker";
 import { NotificationService } from "../../application/services/noitications.service";
 import { InMemoryQueueService } from "../../application/services/in-memory-queue.service";
 import { FFmpegService } from "../../application/services/ffmpeg.service";
+import { QueueService } from "../../application/services/rabbitmq-queue.service";
+import { VideoWorkerController } from "../controllers/video-worker.controller";
 
 @Module({
   // 2. ADICIONE O DATABASEMODULE AQUI
   imports: [ConfigModule, HttpModule, DatabaseModule],
 
-  controllers: [VideoController, HealthController],
+  controllers: [VideoController, HealthController, VideoWorkerController],
   providers: [
     // ... todos os seus outros providers
     {
@@ -61,9 +63,9 @@ import { FFmpegService } from "../../application/services/ffmpeg.service";
     GetVideoStatusUseCase,
     ListVideosUseCase,
     DownloadFramesUseCase,
-
+    QueueService,
     VideoProcessingWorker,
   ],
-  exports: [],
+  exports: [QueueService],
 })
 export class VideoModule {}

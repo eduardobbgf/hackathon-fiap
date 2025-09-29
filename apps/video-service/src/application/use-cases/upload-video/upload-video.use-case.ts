@@ -7,6 +7,7 @@ import { IFileStorageService } from "../../ports/file-storage.service.interface"
 import { Video } from "apps/video-service/src/domain";
 import { IUserServiceClient } from "../../ports/user-service-client.interface";
 import { UUID } from "crypto";
+import { QueueService } from "../../services/rabbitmq-queue.service";
 
 export interface UploadVideoRequest {
   file: Express.Multer.File;
@@ -24,6 +25,7 @@ export class UploadVideoUseCase
     private readonly fileStorageService: IFileStorageService,
     @Inject("IUserServiceClient") // A nova dependência
     private readonly userServiceClient: IUserServiceClient,
+    private readonly queueService: QueueService, // Injete o QueueService
   ) {}
 
   async execute(request: UploadVideoRequest): Promise<UploadVideoResponseDto> {
@@ -42,6 +44,7 @@ export class UploadVideoUseCase
     });
 
     const savedVideo = await this.videoRepository.save(newVideo);
+    this.queueService.addVideoToQueue(savedVideo.id);
 
     return {
       id: savedVideo.id,

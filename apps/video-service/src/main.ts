@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,19 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ["amqp://guest:guest@localhost:5672"],
+      queue: "video_processing_queue",
+      queueOptions: {
+        durable: true, // A fila sobreviverá a reinicializações do broker
+      },
+    },
+  });
+
+  // Inicia todos os microserviços (neste caso, o ouvinte do RabbitMQ)
+  await app.startAllMicroservices();
   // Prefixo global para todas as rotas da API
   app.setGlobalPrefix("api/v1");
 
