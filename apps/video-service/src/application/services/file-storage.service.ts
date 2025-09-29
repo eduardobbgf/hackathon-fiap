@@ -62,4 +62,36 @@ export class FileStorageService implements IFileStorageService {
       archive.finalize();
     });
   }
+  getFilename(filePath: string): string {
+    return path.basename(filePath);
+  }
+
+  /**
+   * Retorna o caminho completo para um arquivo de vídeo.
+   */
+  getFilePath(filename: string): string {
+    console.log(this.videosStoragePath);
+    console.log(filename);
+
+    return filename;
+  }
+
+  /**
+   * Deleta uma lista de arquivos do sistema de arquivos.
+   */
+  async deleteFiles(filePaths: string[]): Promise<void> {
+    console.log(
+      `[FileStorageService] Deletando ${filePaths.length} arquivos...`,
+    );
+    const deletePromises = filePaths.map((filePath) =>
+      fs.promises.unlink(filePath).catch((err) => {
+        // Loga o erro mas não para o processo se um arquivo não puder ser deletado
+        console.error(
+          `[FileStorageService] Falha ao deletar o arquivo ${filePath}:`,
+          err,
+        );
+      }),
+    );
+    await Promise.all(deletePromises);
+  }
 }

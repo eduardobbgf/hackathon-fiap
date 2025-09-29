@@ -8,7 +8,6 @@ import { ProcessVideoUseCase } from "../../application";
 export class VideoWorkerController {
   constructor(private readonly processVideoUseCase: ProcessVideoUseCase) {}
 
-  // O decorador @EventPattern diz ao NestJS para ouvir por este evento específico.
   @EventPattern("video_uploaded")
   async handleVideoUploaded(
     @Payload() data: { videoId: string },
@@ -21,24 +20,37 @@ export class VideoWorkerController {
       `[VideoWorker] Mensagem recebida para processar vídeo: ${data.videoId}`,
     );
 
+    // 1. CONFIRME IMEDIATAMENTE (ACK)
+    // Diga ao RabbitMQ: "Recebi a tarefa. Pode remover da fila. Eu cuido daqui pra frente."
+    // Isso evita qualquer problema de timeout ou canal fechado.
+    channel.ack(originalMsg);
+    console.log(
+      `[VideoWorker] Mensagem para o vídeo ${data.videoId} confirmada (ack). Iniciando processamento longo.`,
+    );
+
     try {
-      // Chama o seu caso de uso existente para fazer o trabalho pesado
+      // 2. EXECUTE O PROCESSO LONGO
+      // Agora, o processamento pode demorar o tempo que for necessário.
+      // O RabbitMQ não está mais esperando por uma resposta.
       await this.processVideoUseCase.execute({ videoId: data.videoId });
 
-      // Se o processamento for bem-sucedido, remove a mensagem da fila.
-      channel.ack(originalMsg);
       console.log(
-        `[VideoWorker] Vídeo ${data.videoId} processado com sucesso. Mensagem confirmada (ack).`,
+        `[VideoWorker] Vídeo ${data.videoId} processado com sucesso.`,
       );
     } catch (error) {
+      // 3. TRATAMENTO DE ERRO MANUAL
+      // Como já demos o 'ack', o RabbitMQ não vai reenfileirar a mensagem.
+      // Precisamos lidar com a falha manualmente.
       console.error(
-        `[VideoWorker] Falha ao processar vídeo ${data.videoId}:`,
+        `[VideoWorker] Falha CRÍTICA ao processar vídeo ${data.videoId}:`,
         error,
       );
-      // Em caso de erro, você pode optar por rejeitar a mensagem (nack),
-      // o que pode fazê-la ir para uma dead-letter queue se configurado.
-      // Por simplicidade, aqui apenas confirmamos para não entrar em loop.
-      channel.ack(originalMsg);
+
+      // O que fazer aqui?
+      // - Logar o erro em um sistema de monitoramento (Sentry, Datadog).
+      // - Atualizar o status do vídeo no banco de dados para 'FAILED'.
+      // - Enviar a mensagem para uma outra fila, uma "dead-letter queue", para tentativa manual posterior.
+      // Por enquanto, vamos apenas logar e atualizar o status (assumindo que o use case faz isso).
     }
   }
 }

@@ -1,6 +1,9 @@
 import { VideoStatus } from "./video-status.vo";
 
 export class Video {
+  // O _zipFilename é declarado como uma propriedade da classe, não no construtor.
+  private _zipFilename?: string;
+
   constructor(
     private _id: string,
     private _filename: string,
@@ -11,8 +14,14 @@ export class Video {
     private _userId: string,
     private _createdAt: Date,
     private _updatedAt: Date,
-  ) {}
+    zipFilename?: string, // Recebido como um parâmetro opcional normal
+  ) {
+    this._zipFilename = zipFilename;
+  }
 
+  /**
+   * Método factory para criar uma nova instância de Vídeo no estado inicial.
+   */
   public static create(data: {
     id: string;
     filename: string;
@@ -25,13 +34,15 @@ export class Video {
       data.filename,
       data.originalName,
       data.size,
-      VideoStatus.UPLOADED(),
-      0,
+      VideoStatus.UPLOADED(), // O vídeo começa com o status UPLOADED
+      0, // Frame count inicial é 0
       data.userId,
-      new Date(),
-      new Date(),
+      new Date(), // Data de criação
+      new Date(), // Data de atualização inicial é a mesma da criação
     );
   }
+
+  // --- Getters para acesso seguro às propriedades ---
 
   get id(): string {
     return this._id;
@@ -49,6 +60,7 @@ export class Video {
     return this._size;
   }
 
+  // O getter retorna o valor primitivo do Value Object
   get status(): string {
     return this._status.value;
   }
@@ -69,25 +81,53 @@ export class Video {
     return this._updatedAt;
   }
 
+  get zipFilename(): string | undefined {
+    return this._zipFilename;
+  }
+
+  // --- Métodos de Transição de Estado (Lógica de Negócio) ---
+
+  /**
+   * Inicia o processamento do vídeo, mudando seu status.
+   */
   public startProcessing(): void {
-    if (this._status.equals(VideoStatus.UPLOADED())) {
-      this._status = VideoStatus.PROCESSING();
-      this._updatedAt = new Date();
-    } else {
+    if (!this._status.equals(VideoStatus.UPLOADED())) {
       throw new Error(
-        "Cannot start processing a video that is not in the UPLOADED status.",
+        "Apenas vídeos com status 'UPLOADED' podem iniciar o processamento.",
       );
     }
+    this._status = VideoStatus.PROCESSING();
+    this.touch();
   }
 
-  public markAsCompleted(frameCount: number): void {
+  /**
+   * Finaliza o processamento com sucesso, atualizando os dados.
+   */
+  public completeProcessing(frameCount: number, zipFilename: string): void {
+    if (!this._status.equals(VideoStatus.PROCESSING())) {
+      throw new Error(
+        "Apenas vídeos com status 'PROCESSING' podem ser marcados como completos.",
+      );
+    }
     this._status = VideoStatus.COMPLETED();
     this._frameCount = frameCount;
-    this._updatedAt = new Date();
+    this._zipFilename = zipFilename;
+    this.touch();
   }
 
-  public markAsFailed(): void {
+  /**
+   * Marca o processamento do vídeo como falho.
+   */
+  public failProcessing(): void {
+    // Permite marcar como falha a partir de qualquer estado (UPLOADED ou PROCESSING)
     this._status = VideoStatus.ERROR();
+    this.touch();
+  }
+
+  /**
+   * Método privado para atualizar a data de modificação.
+   */
+  private touch(): void {
     this._updatedAt = new Date();
   }
 }

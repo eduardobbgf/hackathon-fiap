@@ -2,7 +2,7 @@
 
 # --- CONFIGURAÇÃO ---
 # O número de vídeos que você quer enviar para a fila.
-NUM_UPLOADS=10
+NUM_UPLOADS=50
 
 # O caminho para o arquivo de vídeo que será enviado.
 # Crie um pequeno arquivo de vídeo de teste e coloque o caminho aqui.
@@ -11,7 +11,7 @@ USERID="93c4b8b5-1625-4947-9750-267454ed9ce0"
 # O token de autenticação do usuário.
 # ATENÇÃO: Este token tem um tempo de expiração! Se o script falhar com erro 401,
 # você precisará gerar um novo token no seu endpoint de login e colá-lo aqui.
-AUTH_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2M0YjhiNS0xNjI1LTQ5NDctOTc1MC0yNjc0NTRlZDljZTAiLCJlbWFpbCI6ImpvdGFAZW1haWwuY29tIiwibmFtZSI6Ikpvw6NvIGRhIFNpbHZhIiwiaWF0IjoxNzU5MTA4NTkzLCJleHAiOjE3NTkxMDk0OTN9.TruR4Nnykcz7fY0C3t5ZCIt56Y3WUUyPcxnAiCdyyuQ"
+AUTH_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5M2M0YjhiNS0xNjI1LTQ5NDctOTc1MC0yNjc0NTRlZDljZTAiLCJlbWFpbCI6ImpvdGFAZW1haWwuY29tIiwibmFtZSI6Ikpvw6NvIGRhIFNpbHZhIiwiaWF0IjoxNzU5MTcwMTczLCJleHAiOjE3NTkxNzEwNzN9.oi0CKWuJ3Vvp7t4PPsvHoNT98srML3bd99Cpbyo-3Vc"
 
 # A URL do seu endpoint de upload.
 UPLOAD_URL="http://localhost:3001/api/v1/videos/upload"
