@@ -6,6 +6,7 @@ import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   const configService = app.get(ConfigService);
 
   // Validação global com regras de segurança
@@ -27,8 +28,8 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ["amqp://guest:guest@localhost:5672"],
-      queue: "video_processing_queue",
+      urls: [process.env.RABBITMQ_URL],
+      queue: process.env.RABBIT_VIDEO_QUEUE,
       queueOptions: {
         durable: true, // A fila sobreviverá a reinicializações do broker
       },

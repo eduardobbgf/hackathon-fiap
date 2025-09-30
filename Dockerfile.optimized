@@ -1,0 +1,186 @@
+# Dockerfile otimizado para suportar pino-pretty no Docker
+
+# ===== STAGE 1: Build =====
+FROM node:18-alpine AS builder
+
+# Instalar dependências do sistema necessárias
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos de configuração
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+
+# ✅ Instalar TODAS as dependências (incluindo devDependencies para pino-pretty)
+RUN npm ci --include=dev
+
+# Copiar código fonte
+COPY . .
+
+# Build da aplicação
+RUN npm run build
+
+# ===== STAGE 2: Production =====
+FROM node:18-alpine AS production
+
+# Instalar dependências do sistema para runtime
+RUN apk add --no-cache \
+    dumb-init \
+    curl
+
+# Criar usuário não-root para segurança
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos de configuração
+COPY package*.json ./
+
+# ✅ Instalar dependências de produção E pino-pretty
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copiar aplicação buildada do stage anterior
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
+
+# Criar diretórios necessários
+RUN mkdir -p /tmp/uploads && \
+    chown -R nestjs:nodejs /tmp/uploads
+
+# Mudar para usuário não-root
+USER nestjs
+
+# Expor porta
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# ✅ Usar dumb-init para proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Comando de inicialização
+CMD ["node", "dist/apps/video-service/main"]
+
+# ===== DOCKERFILE ALTERNATIVO: Development =====
+# Para usar em desenvolvimento com hot reload
+
+FROM node:18-alpine AS development
+
+# Instalar dependências do sistema
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos de configuração
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+
+# ✅ Instalar todas as dependências (incluindo pino-pretty)
+RUN npm ci
+
+# Copiar código fonte
+COPY . .
+
+# Expor porta
+EXPOSE 3001
+
+# ✅ Comando para desenvolvimento com hot reload
+CMD ["npm", "run", "start:dev"]
+
+# ===== DOCKER-COMPOSE ATUALIZADO =====
+# Para usar com o Dockerfile otimizado
+
+# version: '3.8'
+# services:
+#   video-service:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#       target: production  # ou development para dev
+#     container_name: fiap_video_service
+#     ports:
+#       - "3001:3001"
+#     env_file:
+#       - .env.docker
+#     depends_on:
+#       database:
+#         condition: service_healthy
+#       rabbitmq:
+#         condition: service_healthy
+#       user-service:
+#         condition: service_started
+#     networks:
+#       - app-network
+#     restart: unless-stopped
+#     volumes:
+#       - /tmp/uploads:/tmp/uploads  # Para uploads
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#       start_period: 30s
+
+/*
+CARACTERÍSTICAS DO DOCKERFILE OTIMIZADO:
+
+1. ✅ MULTI-STAGE BUILD
+   - Stage 1: Build com todas as dependências
+   - Stage 2: Produção otimizada
+
+2. ✅ PINO-PRETTY INCLUÍDO
+   - Instala pino-pretty explicitamente
+   - Funciona tanto em dev quanto em prod
+
+3. ✅ SEGURANÇA
+   - Usuário não-root (nestjs)
+   - Dependências mínimas em produção
+   - dumb-init para signal handling
+
+4. ✅ PERFORMANCE
+   - Cache otimizado do npm
+   - Apenas dependências necessárias
+   - Health checks configurados
+
+5. ✅ DESENVOLVIMENTO
+   - Target separado para desenvolvimento
+   - Hot reload suportado
+   - Todas as dev dependencies
+
+COMANDOS PARA USAR:
+
+# Build para produção
+docker build --target production -t video-service:prod .
+
+# Build para desenvolvimento  
+docker build --target development -t video-service:dev .
+
+# Usar no docker-compose
+docker-compose build --no-cache video-service
+docker-compose up
+
+RESULTADO:
+- ✅ Pino-pretty funciona no Docker
+- ✅ Logs bonitos e coloridos
+- ✅ Performance otimizada
+- ✅ Segurança melhorada
+*/

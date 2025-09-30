@@ -6,14 +6,14 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { VideoModule } from "./infrastructure/modules/video.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
 import databaseConfig from "./infrastructure/config/database.config";
-import { AuthLibModule } from "@app/auth-lib";
+import { AuthLibModule } from "@app/auth-lib"; // <-- Importe os tipos
+import { v4 as uuidv4 } from "uuid";
+import { LoggerModule } from "nestjs-pino";
 
 // O AppMdule agora importa apenas os módulos de DENTRO do seu serviço
 
 @Module({
   imports: [
-    // 1. Carrega o .env globalmente para este serviço
-    // 1. ConfigModule para carregar suas variáveis de ambiente e configurações
     ConfigModule.forRoot({
       isGlobal: true, // Torna as configurações disponíveis globalmente
       load: [databaseConfig], // Carrega a sua configuração de banco de dados

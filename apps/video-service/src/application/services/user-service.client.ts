@@ -15,7 +15,7 @@ export class UserServiceClient implements IUserServiceClient {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.userServiceUrl = "http://localhost:4001/api/v1";
+    this.userServiceUrl = process.env.USER_SERVICE_URL;
   }
 
   async findUserById(userId: string, token: string): Promise<User | null> {

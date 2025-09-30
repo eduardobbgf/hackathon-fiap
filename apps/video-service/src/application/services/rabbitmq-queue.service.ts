@@ -20,8 +20,8 @@ export class QueueService implements OnModuleInit {
     this.client = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ["amqp://guest:guest@localhost:5672"],
-        queue: "video_processing_queue",
+        urls: [process.env.RABBITMQ_URL],
+        queue: process.env.RABBIT_VIDEO_QUEUE,
       },
     });
   }
