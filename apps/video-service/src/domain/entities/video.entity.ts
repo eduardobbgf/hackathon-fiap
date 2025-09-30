@@ -1,7 +1,6 @@
 import { VideoStatus } from "./video-status.vo";
 
 export class Video {
-  // O _zipFilename é declarado como uma propriedade da classe, não no construtor.
   private _zipFilename?: string;
 
   constructor(
@@ -12,9 +11,10 @@ export class Video {
     private _status: VideoStatus,
     private _frameCount: number,
     private _userId: string,
+    private _userEmail: string, // 1. Adicionado aqui
     private _createdAt: Date,
     private _updatedAt: Date,
-    zipFilename?: string, // Recebido como um parâmetro opcional normal
+    zipFilename?: string,
   ) {
     this._zipFilename = zipFilename;
   }
@@ -28,17 +28,19 @@ export class Video {
     originalName: string;
     size: number;
     userId: string;
+    userEmail: string; // 2. Adicionado ao tipo do parâmetro
   }): Video {
     return new Video(
       data.id,
       data.filename,
       data.originalName,
       data.size,
-      VideoStatus.UPLOADED(), // O vídeo começa com o status UPLOADED
-      0, // Frame count inicial é 0
+      VideoStatus.UPLOADED(),
+      0,
       data.userId,
-      new Date(), // Data de criação
-      new Date(), // Data de atualização inicial é a mesma da criação
+      data.userEmail, // 3. Passado para o construtor
+      new Date(),
+      new Date(),
     );
   }
 
@@ -60,7 +62,6 @@ export class Video {
     return this._size;
   }
 
-  // O getter retorna o valor primitivo do Value Object
   get status(): string {
     return this._status.value;
   }
@@ -71,6 +72,11 @@ export class Video {
 
   get userId(): string {
     return this._userId;
+  }
+
+  // 4. Getter para a nova propriedade
+  get userEmail(): string {
+    return this._userEmail;
   }
 
   get createdAt(): Date {
@@ -119,7 +125,6 @@ export class Video {
    * Marca o processamento do vídeo como falho.
    */
   public failProcessing(): void {
-    // Permite marcar como falha a partir de qualquer estado (UPLOADED ou PROCESSING)
     this._status = VideoStatus.ERROR();
     this.touch();
   }

@@ -12,6 +12,7 @@ import { QueueService } from "../../services/rabbitmq-queue.service";
 export interface UploadVideoRequest {
   file: Express.Multer.File;
   userId: string;
+  userEmail: string;
 }
 
 @Injectable()
@@ -29,11 +30,12 @@ export class UploadVideoUseCase
   ) {}
 
   async execute(request: UploadVideoRequest): Promise<UploadVideoResponseDto> {
-    const { file, userId } = request;
+    const { file, userId, userEmail } = request;
 
     const filename = `${uuidv4()}-${file.originalname}`;
 
     const filePath = await this.fileStorageService.upload(file, filename);
+    console.log(userEmail);
 
     const newVideo = Video.create({
       id: uuidv4(),
@@ -41,8 +43,8 @@ export class UploadVideoUseCase
       originalName: file.originalname,
       size: file.size,
       userId: userId,
+      userEmail: userEmail,
     });
-
     const savedVideo = await this.videoRepository.save(newVideo);
     this.queueService.addVideoToQueue(savedVideo.id);
 

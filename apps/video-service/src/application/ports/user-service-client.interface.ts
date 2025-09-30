@@ -1,7 +1,7 @@
-import { User } from "apps/user-service/src/domain";
 import { UUID } from "crypto";
+import { User } from "../../domain/entities/user.entity";
 
 export interface IUserServiceClient {
-  findUserById(userId: string, token: string): Promise<User | null>;
+  findUserById(userId: string): Promise<User | null>;
   // Métodos adicionais, como findUserByEmail, se necessário
 }

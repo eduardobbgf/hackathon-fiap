@@ -54,6 +54,7 @@ export class VideoController {
     const request = {
       file, // o objeto de arquivo
       userId: body.userId,
+      userEmail: body.userEmail,
     };
 
     return this.uploadVideoUseCase.execute(request);

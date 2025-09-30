@@ -66,6 +66,7 @@ export class VideoEntityRepository implements IVideoRepository {
       VideoStatus.fromValue(entity.status), // Converte a string do DB para VO
       entity.frameCount,
       entity.userId,
+      entity.userEmail,
       entity.createdAt,
       entity.updatedAt,
     );
@@ -80,6 +81,7 @@ export class VideoEntityRepository implements IVideoRepository {
       status: video.status, // Converte o VO para string do DB
       frameCount: video.frameCount,
       userId: video.userId,
+      userEmail: video.userEmail,
       createdAt: video.createdAt,
       updatedAt: video.updatedAt,
     };

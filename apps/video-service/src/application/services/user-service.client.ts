@@ -1,12 +1,12 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject, Scope } from "@nestjs/common";
 import { IUserServiceClient } from "../ports/user-service-client.interface";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { User } from "apps/user-service/src/domain";
 import { REQUEST } from "@nestjs/core";
+import { User } from "../../domain/entities/user.entity";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UserServiceClient implements IUserServiceClient {
   private readonly userServiceUrl: string;
 
@@ -18,11 +18,10 @@ export class UserServiceClient implements IUserServiceClient {
     this.userServiceUrl = process.env.USER_SERVICE_URL;
   }
 
-  async findUserById(userId: string, token: string): Promise<User | null> {
+  async findUserById(userId: string): Promise<User | null> {
+    console.log(this.request);
     console.log("aqui");
     console.log(`${this.userServiceUrl}/users/${userId}`);
-    const authorizationHeader = this.request.headers["authorization"];
-    console.log(authorizationHeader);
     try {
       const { data } = await firstValueFrom(
         this.httpService.get(
@@ -30,7 +29,7 @@ export class UserServiceClient implements IUserServiceClient {
           {
             // 2. Objeto de configuração (segundo argumento)
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjJmNDgzZi0zNGI0LTRlZDYtYWY5NS05YmFmZWJlNGQ3OGYiLCJlbWFpbCI6ImpvdGFAeW9wbWFpbC5jb20iLCJuYW1lIjoiSm_Do28gZGEgU2lsdmEiLCJpYXQiOjE3NTkyNTk3NTQsImV4cCI6MTc1OTI2ODc1NH0.527ScMeRSW7LapAN57r6CmYUmpyaEjNqOTIhd0c_bRU`,
             },
           },
         ),
