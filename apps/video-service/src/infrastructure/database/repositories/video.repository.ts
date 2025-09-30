@@ -46,7 +46,9 @@ export class VideoEntityRepository implements IVideoRepository {
   }
 
   async findByUserId(userId: string): Promise<Video[]> {
-    const entities = await this.videoOrmRepository.find({ where: { userId } });
+    const entities = await this.videoOrmRepository.find({
+      where: { userId: userId },
+    });
     return entities.map((entity) => this.toDomain(entity));
   }
 

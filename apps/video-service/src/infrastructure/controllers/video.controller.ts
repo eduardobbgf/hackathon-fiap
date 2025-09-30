@@ -36,7 +36,7 @@ import {
 import { JwtAuthGuard } from "@app/auth-lib";
 
 @Controller("videos")
-// @UseGuards(AuthGuard("jwt")) // Protege todas as rotas do controlador
+@UseGuards(JwtAuthGuard)
 export class VideoController {
   constructor(
     private readonly uploadVideoUseCase: UploadVideoUseCase,
@@ -46,14 +46,11 @@ export class VideoController {
   ) {}
 
   @Post("upload")
-  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor("file")) // 'file' é o nome do campo no formulário
   async uploadVideo(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UploadVideoDto,
   ): Promise<UploadVideoResponseDto> {
-    // Combina os dados em um único objeto para o caso de uso
-    console.log(body);
     const request = {
       file, // o objeto de arquivo
       userId: body.userId,

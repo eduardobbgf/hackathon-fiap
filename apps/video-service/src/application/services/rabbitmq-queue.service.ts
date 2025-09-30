@@ -31,11 +31,6 @@ export class QueueService implements OnModuleInit {
    * @param videoId O ID do vídeo a ser processado.
    */
   public addVideoToQueue(videoId: string) {
-    console.log(
-      `[QueueService] Adicionando vídeo ${videoId} à fila de processamento.`,
-    );
-    // 'emit' envia uma mensagem do tipo "evento" (fire-and-forget)
-    // O primeiro argumento é o "padrão" ou "tópico" do evento.
     this.client.emit("video_uploaded", { videoId });
   }
 }

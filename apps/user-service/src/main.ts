@@ -5,7 +5,6 @@ import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
 
   // Global validation pipe
   app.useGlobalPipes(

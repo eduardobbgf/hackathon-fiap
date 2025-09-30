@@ -18,37 +18,25 @@ export class JwtServiceImpl implements IJwtService {
   async generateAccessToken(
     payload: Omit<JwtPayload, "iat" | "exp">,
   ): Promise<string> {
-    console.log(
-      "[JwtServiceImpl] Gerando Access Token...",
-      this.configService.get<string>("JWT_ACCESS_SECRET"),
-    );
-    const secret =
-      "ee1d949c31d30ff11676339d802c4b8752a19c17eda164b52e11ac194cbd6114";
     return this.nestJwtService.signAsync(payload, {
-      secret: secret,
-      expiresIn: "15m",
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
     });
   }
 
   async generateRefreshToken(
     payload: Omit<JwtPayload, "iat" | "exp">,
   ): Promise<string> {
-    console.log("[JwtServiceImpl] Gerando Refresh Token...");
-    const secret =
-      "ee1d949c31d30ff11676339d802c4b8752a19c17eda164b52e11ac194cbd6114";
     return this.nestJwtService.signAsync(payload, {
-      secret: secret,
+      secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: "15m",
     });
   }
 
   async verifyAccessToken(token: string): Promise<JwtPayload> {
-    console.log("[JwtServiceImpl] Verificando Access Token...");
-    const secret =
-      "ee1d949c31d30ff11676339d802c4b8752a19c17eda164b52e11ac194cbd6114";
     try {
       return await this.nestJwtService.verifyAsync<JwtPayload>(token, {
-        secret: secret,
+        secret: process.env.JWT_ACCESS_SECRET,
       });
     } catch (error) {
       console.error(
@@ -60,12 +48,9 @@ export class JwtServiceImpl implements IJwtService {
   }
 
   async verifyRefreshToken(token: string): Promise<JwtPayload> {
-    console.log("[JwtServiceImpl] Verificando Refresh Token...");
-    const secret =
-      "ee1d949c31d30ff11676339d802c4b8752a19c17eda164b52e11ac194cbd6114";
     try {
       return await this.nestJwtService.verifyAsync<JwtPayload>(token, {
-        secret: secret,
+        secret: process.env.JWT_ACCESS_SECRET,
       });
     } catch (error) {
       console.error(

@@ -28,7 +28,6 @@ export class AuthController {
   async login(
     @Body() loginDto: AuthenticateUserDto,
   ): Promise<AuthenticateUserResponseDto> {
-    console.log("Controller");
     return this.userService.authenticateUser(loginDto);
   }
 

@@ -13,8 +13,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy"; // Caminho atualizado
       imports: [ConfigModule], // Cada app fornecerá sua própria ConfigModule
       useFactory: (configService: ConfigService) => ({
         // O segredo será lido das variáveis de ambiente do app que usar a lib
-        secret:
-          "ee1d949c31d30ff11676339d802c4b8752a19c17eda164b52e11ac194cbd6114",
+        secret: process.env.JWT_ACCESS_SECRET,
       }),
       inject: [ConfigService],
     }),

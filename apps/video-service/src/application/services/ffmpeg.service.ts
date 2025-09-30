@@ -18,16 +18,9 @@ export class FFmpegService implements IVideoProcessingService {
   );
 
   constructor() {
-    console.log(`[FFmpegService] Inicializado.`);
-    console.log(
-      `[FFmpegService] Caminho de saída para frames definido como: ${this.framesOutputPath}`,
-    );
-
     // Garante que a pasta de saída de frames existe
     if (!fs.existsSync(this.framesOutputPath)) {
-      console.log(`[FFmpegService] Diretório de saída não existe. Criando...`);
       fs.mkdirSync(this.framesOutputPath, { recursive: true });
-      console.log(`[FFmpegService] Diretório criado com sucesso.`);
     } else {
       console.log(`[FFmpegService] Diretório de saída já existe.`);
     }
@@ -36,28 +29,16 @@ export class FFmpegService implements IVideoProcessingService {
   async processVideo(
     filePath: string,
   ): Promise<{ frameCount: number; frameFilePaths: string[] }> {
-    console.log(
-      `[FFmpegService] Iniciando processamento para o vídeo: ${filePath}`,
-    );
-
     return new Promise((resolve, reject) => {
       const outputPattern = path.join(this.framesOutputPath, "frame-%04d.png");
 
       // Comando FFmpeg para extrair frames como PNG a uma taxa de 1 frame/segundo
       const command = `ffmpeg -i "${filePath}" -vf "fps=1" "${outputPattern}"`;
 
-      console.log(`[FFmpegService] Executando comando FFmpeg:`);
-      console.log(`> ${command}`);
-
       const startTime = Date.now();
 
       exec(command, (error, stdout, stderr) => {
         const duration = (Date.now() - startTime) / 1000; // Duração em segundos
-        console.log(
-          `[FFmpegService] Processo FFmpeg concluído em ${duration.toFixed(2)} segundos.`,
-        );
-
-        // Logar a saída padrão (stdout) e o erro padrão (stderr) do FFmpeg é MUITO útil para depuração.
         if (stdout) {
           console.log(
             `[FFmpegService] Saída padrão (stdout) do FFmpeg:\n${stdout}`,
@@ -76,11 +57,6 @@ export class FFmpegService implements IVideoProcessingService {
           return reject(new Error("Video processing failed."));
         }
 
-        console.log(
-          "[FFmpegService] FFmpeg executado com sucesso. Lendo diretório de saída para contar os frames...",
-        );
-
-        // Lógica para contar os frames extraídos
         fs.readdir(this.framesOutputPath, (err, files) => {
           if (err) {
             console.error(
@@ -88,10 +64,6 @@ export class FFmpegService implements IVideoProcessingService {
             );
             return reject(err);
           }
-
-          console.log(
-            `[FFmpegService] Encontrados ${files.length} arquivos no diretório de saída.`,
-          );
 
           const frameFiles = files.filter(
             (file) => path.extname(file).toLowerCase() === ".png",
@@ -107,9 +79,6 @@ export class FFmpegService implements IVideoProcessingService {
             path.join(this.framesOutputPath, file),
           );
 
-          console.log(
-            `[FFmpegService] Processamento concluído. Total de frames extraídos: ${frameFilePaths.length}.`,
-          );
           resolve({ frameCount: frameFilePaths.length, frameFilePaths });
         });
       });

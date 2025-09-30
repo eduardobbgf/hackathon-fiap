@@ -17,9 +17,6 @@ export class LocalStrategy extends PassportStrategy(Strategy, "local") {
 
   async validate(email: string, pass: string): Promise<User> {
     try {
-      console.log(
-        `[LocalStrategy] Delegando validação para AuthenticateUserUseCase para o email: ${email}`,
-      );
       const authResponse = await this.authenticateUserUseCase.execute({
         email: email,
         password: pass,
