@@ -17,7 +17,7 @@ export class VideoEntity {
   @Column({ type: "varchar", length: 255 })
   filename: string;
 
-  @Column({ type: "uuid", name: "user_email" })
+  @Column({ type: "varchar", length: 255, name: "user_email" })
   userEmail: string;
 
   @Column({ type: "varchar", length: 255, name: "original_name" })

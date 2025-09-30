@@ -77,6 +77,12 @@ services:
       - USER_SERVICE_URL=http://user-service:4001
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672
       - RABBIT_VIDEO_QUEUE=video_processing_queue
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - GOOGLE_APP_PASSWORD=${GOOGLE_APP_PASSWORD}
     depends_on:
       - database
       - rabbitmq
