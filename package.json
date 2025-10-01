@@ -61,6 +61,8 @@
     "db:seed:video-service": "cd apps/video-service && npm run seed:run"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.899.0",
+    "@aws-sdk/s3-request-presigner": "^3.899.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.3.0",

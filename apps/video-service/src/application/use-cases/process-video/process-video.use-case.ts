@@ -32,14 +32,14 @@ export class ProcessVideoUseCase {
       throw new Error(`Vídeo com ID ${videoId} não encontrado.`);
     }
 
-    const videoFilePath = this.fileStorage.getFilePath(video.filename);
-
     try {
+      const videoFilePath = await this.fileStorage.getFilePath(video.filename);
       video.startProcessing();
+      console.log("video", videoFilePath);
       await this.videoRepository.update(video);
       const { frameCount, frameFilePaths } =
         await this.videoProcessingService.processVideo(videoFilePath);
-
+      console.log("frame", frameFilePaths);
       if (frameCount === 0) {
         throw new Error(
           "Nenhum frame foi extraído do vídeo. O processamento não pode continuar.",
@@ -53,11 +53,11 @@ export class ProcessVideoUseCase {
       const zipFilename = this.fileStorage.getFilename(zipFilePath);
       video.completeProcessing(frameCount, zipFilename);
 
-      const response =
-        await this.notificationService.sendVideoProcessingCompleted(
-          video.userEmail,
-          video.originalName,
-        );
+      await this.notificationService.sendVideoProcessingCompleted(
+        video.userEmail,
+        video.originalName,
+      );
+
       await this.videoRepository.update(video);
     } catch (error) {
       console.error(
