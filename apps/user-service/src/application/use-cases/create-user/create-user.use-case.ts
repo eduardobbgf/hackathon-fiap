@@ -15,7 +15,6 @@ export class CreateUserUseCase
   async execute(request: CreateUserDto): Promise<CreateUserResponseDto> {
     const email = new Email(request.email);
 
-    // Verificar se o email já existe
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new BusinessRuleViolationException(
@@ -23,17 +22,14 @@ export class CreateUserUseCase
       );
     }
 
-    // Criar o agregado de usuário
     const userAggregate = await UserAggregate.create(
       request.name,
       email,
       request.password,
     );
 
-    // Salvar o usuário
     const savedUser = await this.userRepository.save(userAggregate.user);
 
-    // Processar eventos de domínio (aqui seria integrado com um event bus)
     const events = userAggregate.getUncommittedEvents();
     userAggregate.markEventsAsCommitted();
 

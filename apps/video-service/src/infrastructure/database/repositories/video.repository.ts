@@ -1,5 +1,3 @@
-// src/infrastructure/database/repositories/video.repository.ts
-
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -32,15 +30,12 @@ export class VideoEntityRepository implements IVideoRepository {
     return this.toDomain(savedEntity);
   }
 
-  // 🔄 Método UPDATE adicionado
   async update(video: Video): Promise<Video> {
     const entity = this.toEntity(video);
-    // O TypeORM usa 'save' tanto para insert (se não houver ID) quanto para update (se houver ID)
     const updatedEntity = await this.videoOrmRepository.save(entity);
     return this.toDomain(updatedEntity);
   }
 
-  // 🗑️ Método DELETE adicionado
   async delete(id: string): Promise<void> {
     await this.videoOrmRepository.delete(id);
   }
@@ -63,7 +58,7 @@ export class VideoEntityRepository implements IVideoRepository {
       entity.filename,
       entity.originalName,
       entity.size,
-      VideoStatus.fromValue(entity.status), // Converte a string do DB para VO
+      VideoStatus.fromValue(entity.status),
       entity.frameCount,
       entity.userId,
       entity.userEmail,
@@ -78,7 +73,7 @@ export class VideoEntityRepository implements IVideoRepository {
       filename: video.filename,
       originalName: video.originalName,
       size: video.size,
-      status: video.status, // Converte o VO para string do DB
+      status: video.status,
       frameCount: video.frameCount,
       userId: video.userId,
       userEmail: video.userEmail,

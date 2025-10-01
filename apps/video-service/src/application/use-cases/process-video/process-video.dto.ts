@@ -1,13 +1,16 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsUUID } from "class-validator";
 
-// DTO de Entrada: O ID do vídeo a ser processado
 export class ProcessVideoDto {
+  @ApiProperty({
+    description: "O ID único do vídeo.",
+    example: "f1g2h3i4-j5k6-7890-1234-567890abcdef",
+  })
   @IsNotEmpty()
   @IsUUID()
   videoId: string;
 }
 
-// DTO de Resposta: Confirmação de que o processamento começou
 export class ProcessVideoResponseDto {
   message: string;
 }

@@ -16,25 +16,20 @@ export class UpdateUserUseCase
   ) {}
 
   async execute(request: UpdateUserDto): Promise<UpdateUserResponseDto> {
-    // Buscar usuário existente
     const existingUser = await this.userRepository.findById(request.id);
     if (!existingUser) {
       throw new EntityNotFoundException("User", request.id);
     }
 
-    // Criar agregado para gerenciar as mudanças
     const userAggregate = new UserAggregate(existingUser);
 
-    // Atualizar nome se fornecido
     if (request.name) {
       userAggregate.updateName(request.name);
     }
 
-    // Atualizar email se fornecido
     if (request.email) {
       const newEmail = new Email(request.email);
 
-      // Verificar se o novo email já está em uso por outro usuário
       const existingUserWithEmail =
         await this.userRepository.findByEmail(newEmail);
       if (existingUserWithEmail && existingUserWithEmail.id !== request.id) {
@@ -46,18 +41,15 @@ export class UpdateUserUseCase
       userAggregate.updateEmail(newEmail);
     }
 
-    // Atualizar senha se fornecida
     if (request.password) {
       await userAggregate.updatePassword(request.password);
     }
 
-    // Salvar as mudanças
     const updatedUser = await this.userRepository.update(
       request.id,
       userAggregate.user,
     );
 
-    // Processar eventos de domínio
     const events = userAggregate.getUncommittedEvents();
     userAggregate.markEventsAsCommitted();
 

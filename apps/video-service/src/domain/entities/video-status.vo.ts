@@ -14,7 +14,6 @@ export class VideoStatus {
     return new VideoStatus("error");
   }
 
-  // New method to create a VideoStatus from a string value
   public static fromValue(value: string): VideoStatus {
     const statuses = [
       this.UPLOADED(),

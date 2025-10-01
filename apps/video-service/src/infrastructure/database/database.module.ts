@@ -1,4 +1,3 @@
-// DatabaseModule - Versão Corrigida e Simplificada
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { VideoEntity } from "./entity/video.entity";

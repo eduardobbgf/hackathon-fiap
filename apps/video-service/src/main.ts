@@ -3,13 +3,13 @@ import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
 
-  // Validação global com regras de segurança
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -18,7 +18,6 @@ async function bootstrap() {
     }),
   );
 
-  // Configuração do CORS para permitir requisições de outras origens
   app.enableCors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -31,19 +30,26 @@ async function bootstrap() {
       urls: [process.env.RABBITMQ_URL],
       queue: process.env.RABBIT_VIDEO_QUEUE,
       queueOptions: {
-        durable: true, // A fila sobreviverá a reinicializações do broker
+        durable: true,
       },
     },
   });
 
-  // Inicia todos os microserviços (neste caso, o ouvinte do RabbitMQ)
   await app.startAllMicroservices();
-  // Prefixo global para todas as rotas da API
   app.setGlobalPrefix("api/v1");
 
-  // Obtém a porta das variáveis de ambiente com um fallback
+  const config = new DocumentBuilder()
+    .setTitle("User Service API")
+    .setDescription("Documentação da API para o User Service")
+    .setVersion("1.0")
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup("docs", app, document);
+
   const port = 3001;
-  // configService.get<number>("PORT", 3005);
 
   await app.listen(port);
 

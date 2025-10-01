@@ -35,7 +35,6 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refresh(@Body() body: { refreshToken: string }) {
-    // TODO: Implementar refresh token logic
     throw new Error("Refresh token not implemented yet");
   }
 }

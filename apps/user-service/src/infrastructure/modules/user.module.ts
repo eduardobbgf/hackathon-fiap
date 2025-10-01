@@ -9,7 +9,7 @@ import { UpdateUserUseCase } from "../../application/use-cases/update-user/updat
 import { IUserService } from "../../application/ports/user.service.interface";
 import { CreateUserUseCase } from "../../application/use-cases/create-user/create-user.use-case";
 import { ConfigModule } from "@nestjs/config";
-import { AuthLibModule, JwtAuthGuard } from "@app/auth-lib"; // Importe a lib pelo alias do tsconfig
+import { AuthLibModule, JwtAuthGuard } from "@app/auth-lib";
 import { APP_GUARD } from "@nestjs/core";
 import { LocalStrategy } from "../auth/strategies/local.strategy";
 import { JwtModule, JwtService } from "@nestjs/jwt";

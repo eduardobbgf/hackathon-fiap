@@ -3,5 +3,4 @@ import { User } from "../../domain/entities/user.entity";
 
 export interface IUserServiceClient {
   findUserById(userId: string): Promise<User | null>;
-  // Métodos adicionais, como findUserByEmail, se necessário
 }

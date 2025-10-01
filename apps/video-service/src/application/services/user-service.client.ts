@@ -24,20 +24,16 @@ export class UserServiceClient implements IUserServiceClient {
     console.log(`${this.userServiceUrl}/users/${userId}`);
     try {
       const { data } = await firstValueFrom(
-        this.httpService.get(
-          `${this.userServiceUrl}/users/${userId}`, // 1. URL (primeiro argumento )
-          {
-            // 2. Objeto de configuração (segundo argumento)
-            headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjJmNDgzZi0zNGI0LTRlZDYtYWY5NS05YmFmZWJlNGQ3OGYiLCJlbWFpbCI6ImpvdGFAeW9wbWFpbC5jb20iLCJuYW1lIjoiSm_Do28gZGEgU2lsdmEiLCJpYXQiOjE3NTkyNTk3NTQsImV4cCI6MTc1OTI2ODc1NH0.527ScMeRSW7LapAN57r6CmYUmpyaEjNqOTIhd0c_bRU`,
-            },
+        this.httpService.get(`${this.userServiceUrl}/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjJmNDgzZi0zNGI0LTRlZDYtYWY5NS05YmFmZWJlNGQ3OGYiLCJlbWFpbCI6ImpvdGFAeW9wbWFpbC5jb20iLCJuYW1lIjoiSm_Do28gZGEgU2lsdmEiLCJpYXQiOjE3NTkyNTk3NTQsImV4cCI6MTc1OTI2ODc1NH0.527ScMeRSW7LapAN57r6CmYUmpyaEjNqOTIhd0c_bRU`,
           },
-        ),
+        }),
       );
       return new User(data.id, data.name, data.email);
     } catch (error) {
       if (error.response?.status === 404) {
-        return null; // Usuário não encontrado
+        return null;
       }
       throw new Error(`Failed to find user: ${error.message}`);
     }

@@ -1,5 +1,3 @@
-// apps/user-service/src/infrastructure/auth/services/jwt.service.ts
-
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService as NestJwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";

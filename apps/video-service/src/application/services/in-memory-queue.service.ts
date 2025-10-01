@@ -12,7 +12,6 @@ export class InMemoryQueueService implements IQueueService {
     this.queue.get(queueName).push(message);
   }
 
-  // Métodos de ajuda para testes
   public getMessages<T>(queueName: string): T[] {
     return this.queue.get(queueName) || [];
   }

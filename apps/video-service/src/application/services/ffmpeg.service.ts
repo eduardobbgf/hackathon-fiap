@@ -1,5 +1,3 @@
-// apps/video-service/src/infrastructure/services/ffmpeg.service.ts
-
 import { Injectable } from "@nestjs/common";
 import { IVideoProcessingService } from "../../application/ports/video-processing.service.interface";
 import { exec } from "child_process";
@@ -18,7 +16,6 @@ export class FFmpegService implements IVideoProcessingService {
   );
 
   constructor() {
-    // Garante que a pasta de saída de frames existe
     if (!fs.existsSync(this.framesOutputPath)) {
       fs.mkdirSync(this.framesOutputPath, { recursive: true });
     } else {
@@ -32,13 +29,12 @@ export class FFmpegService implements IVideoProcessingService {
     return new Promise((resolve, reject) => {
       const outputPattern = path.join(this.framesOutputPath, "frame-%04d.png");
 
-      // Comando FFmpeg para extrair frames como PNG a uma taxa de 1 frame/segundo
       const command = `ffmpeg -i "${filePath}" -vf "fps=1" "${outputPattern}"`;
 
       const startTime = Date.now();
 
       exec(command, (error, stdout, stderr) => {
-        const duration = (Date.now() - startTime) / 1000; // Duração em segundos
+        const duration = (Date.now() - startTime) / 1000;
         if (stdout) {
           console.log(
             `[FFmpegService] Saída padrão (stdout) do FFmpeg:\n${stdout}`,

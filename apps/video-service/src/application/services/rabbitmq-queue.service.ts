@@ -1,5 +1,3 @@
-// apps/video-service/src/infrastructure/queue/queue.service.ts
-
 import { Injectable, OnModuleInit, Inject } from "@nestjs/common";
 import {
   ClientProxy,
@@ -10,13 +8,11 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class QueueService implements OnModuleInit {
-  // O ClientProxy é o objeto usado para enviar mensagens
   private client: ClientProxy;
 
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit() {
-    // Inicializa o cliente que irá se conectar ao RabbitMQ
     this.client = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
@@ -26,10 +22,6 @@ export class QueueService implements OnModuleInit {
     });
   }
 
-  /**
-   * Publica uma mensagem na fila de processamento de vídeo.
-   * @param videoId O ID do vídeo a ser processado.
-   */
   public addVideoToQueue(videoId: string) {
     this.client.emit("video_uploaded", { videoId });
   }

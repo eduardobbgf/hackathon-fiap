@@ -1,5 +1,3 @@
-// libs/auth-lib/src/strategies/jwt.strategy.ts
-
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -15,9 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // O payload do token é retornado aqui
   async validate(payload: any) {
-    // Retorna o que será anexado a `req.user`
-    return { userId: payload.sub, username: payload.username }; // Ajuste conforme seu payload
+    return { userId: payload.sub, username: payload.username };
   }
 }

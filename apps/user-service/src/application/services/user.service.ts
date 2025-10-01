@@ -62,7 +62,6 @@ export class UserService implements IUserService {
 
     await this.userRepository.update(id, userAggregate.user);
 
-    // Processar eventos de domínio
     const events = userAggregate.getUncommittedEvents();
     userAggregate.markEventsAsCommitted();
   }
@@ -78,7 +77,6 @@ export class UserService implements IUserService {
 
     await this.userRepository.update(id, userAggregate.user);
 
-    // Processar eventos de domínio
     const events = userAggregate.getUncommittedEvents();
     userAggregate.markEventsAsCommitted();
   }

@@ -1,6 +1,11 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 
 export class GetUserDto {
+  @ApiProperty({
+    description: "Colocar Id do usuario que quer buscar",
+    example: "fdsaf-a23v-dsfa-dcas-fdsf",
+  })
   @IsNotEmpty()
   @IsString()
   @IsUUID()

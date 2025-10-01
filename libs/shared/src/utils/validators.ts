@@ -1,4 +1,4 @@
-import { ValidationException } from '../exceptions/domain.exception';
+import { ValidationException } from "../exceptions/domain.exception";
 
 export class Validators {
   static isNotEmpty(value: string, fieldName: string): void {
@@ -13,8 +13,8 @@ export class Validators {
   }
 
   static isValidPassword(password: string): boolean {
-    // Mínimo 8 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   }
 
@@ -24,15 +24,27 @@ export class Validators {
     }
   }
 
-  static hasMinLength(value: string, minLength: number, fieldName: string): void {
+  static hasMinLength(
+    value: string,
+    minLength: number,
+    fieldName: string,
+  ): void {
     if (value.length < minLength) {
-      throw new ValidationException(`${fieldName} must have at least ${minLength} characters`);
+      throw new ValidationException(
+        `${fieldName} must have at least ${minLength} characters`,
+      );
     }
   }
 
-  static hasMaxLength(value: string, maxLength: number, fieldName: string): void {
+  static hasMaxLength(
+    value: string,
+    maxLength: number,
+    fieldName: string,
+  ): void {
     if (value.length > maxLength) {
-      throw new ValidationException(`${fieldName} must have at most ${maxLength} characters`);
+      throw new ValidationException(
+        `${fieldName} must have at most ${maxLength} characters`,
+      );
     }
   }
 }

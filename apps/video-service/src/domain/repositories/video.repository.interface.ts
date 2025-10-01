@@ -11,5 +11,4 @@ export interface IVideoRepository {
   getFramesByVideoId(videoId: string): Promise<Frame[]>;
 }
 
-// Às vezes, o token de injeção é exportado daqui também
 export const IVideoRepository = Symbol("IVideoRepository");

@@ -20,13 +20,11 @@ export class GetVideoStatusUseCase
   ): Promise<GetVideoStatusResponseDto> {
     const { videoId } = request;
 
-    // 1. Encontrar o vídeo
     const video = await this.videoRepository.findById(videoId);
     if (!video) {
       throw new BusinessRuleViolationException("Video not found.");
     }
 
-    // 2. Retornar a resposta com o status atual
     return {
       videoId: video.id,
       originalName: video.originalName,

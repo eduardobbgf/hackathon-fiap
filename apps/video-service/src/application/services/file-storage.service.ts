@@ -25,7 +25,6 @@ export class FileStorageService implements IFileStorageService {
   );
 
   constructor() {
-    // Garante que as pastas de armazenamento existem
     if (!fs.existsSync(this.videosStoragePath)) {
       fs.mkdirSync(this.videosStoragePath, { recursive: true });
     }
@@ -45,7 +44,7 @@ export class FileStorageService implements IFileStorageService {
     const zipFilePath = path.join(this.zipsStoragePath, zipFilename);
     const output = fs.createWriteStream(zipFilePath);
     const archive = archiver("zip", {
-      zlib: { level: 9 }, // Nível de compressão
+      zlib: { level: 9 },
     });
 
     return new Promise((resolve, reject) => {
@@ -66,20 +65,13 @@ export class FileStorageService implements IFileStorageService {
     return path.basename(filePath);
   }
 
-  /**
-   * Retorna o caminho completo para um arquivo de vídeo.
-   */
   getFilePath(filename: string): string {
     return filename;
   }
 
-  /**
-   * Deleta uma lista de arquivos do sistema de arquivos.
-   */
   async deleteFiles(filePaths: string[]): Promise<void> {
     const deletePromises = filePaths.map((filePath) =>
       fs.promises.unlink(filePath).catch((err) => {
-        // Loga o erro mas não para o processo se um arquivo não puder ser deletado
         console.error(
           `[FileStorageService] Falha ao deletar o arquivo ${filePath}:`,
           err,

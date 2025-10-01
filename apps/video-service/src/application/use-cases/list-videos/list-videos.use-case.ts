@@ -15,7 +15,6 @@ export class ListVideosUseCase
   async execute(request: ListVideosDto): Promise<ListVideosResponseDto[]> {
     const videos = await this.videoRepository.findByUserId(request.userId);
 
-    // Mapear as entidades de domínio para DTOs de resposta
     return videos.map((video) => ({
       id: video.id,
       originalName: video.originalName,

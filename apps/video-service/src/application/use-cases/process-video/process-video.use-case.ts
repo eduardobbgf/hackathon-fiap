@@ -1,5 +1,3 @@
-// apps/video-service/src/application/use-cases/process-video.use-case.ts
-
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { IVideoProcessingService } from "../../ports/video-processing.service.interface";
 import { IFileStorageService } from "../../ports/file-storage.service.interface";
@@ -52,7 +50,7 @@ export class ProcessVideoUseCase {
 
       await this.fileStorage.deleteFiles(frameFilePaths);
 
-      const zipFilename = this.fileStorage.getFilename(zipFilePath); // Método para extrair apenas o nome do arquivo
+      const zipFilename = this.fileStorage.getFilename(zipFilePath);
       video.completeProcessing(frameCount, zipFilename);
 
       const response =
@@ -67,11 +65,9 @@ export class ProcessVideoUseCase {
         error,
       );
 
-      // 6. Em caso de erro em qualquer etapa, marcar como 'FAILED'
       video.failProcessing();
       await this.videoRepository.update(video);
 
-      // Re-lança o erro para que o worker possa logá-lo
       throw error;
     }
   }

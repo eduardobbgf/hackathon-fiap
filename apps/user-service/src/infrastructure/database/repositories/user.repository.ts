@@ -76,7 +76,6 @@ export class UserRepository implements IUserRepository {
       entity.status as UserStatus,
     );
 
-    // Definir as datas manualmente pois o construtor cria novas datas
     (user as any).createdAt = entity.createdAt;
     (user as any).updatedAt = entity.updatedAt;
 

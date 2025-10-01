@@ -1,11 +1,11 @@
-import { BaseEntity, Validators } from '@app/shared';
-import { Email } from '../value-objects/email.vo';
-import { Password } from '../value-objects/password.vo';
+import { BaseEntity, Validators } from "@app/shared";
+import { Email } from "../value-objects/email.vo";
+import { Password } from "../value-objects/password.vo";
 
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended'
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  SUSPENDED = "suspended",
 }
 
 export class User extends BaseEntity {
@@ -19,7 +19,7 @@ export class User extends BaseEntity {
     email: Email,
     password: Password,
     id?: string,
-    status: UserStatus = UserStatus.ACTIVE
+    status: UserStatus = UserStatus.ACTIVE,
   ) {
     super(id);
     this.setName(name);
@@ -29,9 +29,9 @@ export class User extends BaseEntity {
   }
 
   private setName(name: string): void {
-    Validators.isNotEmpty(name, 'Name');
-    Validators.hasMinLength(name, 2, 'Name');
-    Validators.hasMaxLength(name, 100, 'Name');
+    Validators.isNotEmpty(name, "Name");
+    Validators.hasMinLength(name, 2, "Name");
+    Validators.hasMaxLength(name, 100, "Name");
     this._name = name.trim();
   }
 
@@ -73,7 +73,6 @@ export class User extends BaseEntity {
     return this._status === UserStatus.ACTIVE;
   }
 
-  // Getters
   public get name(): string {
     return this._name;
   }
@@ -97,7 +96,7 @@ export class User extends BaseEntity {
       email: this._email.value,
       status: this._status,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }

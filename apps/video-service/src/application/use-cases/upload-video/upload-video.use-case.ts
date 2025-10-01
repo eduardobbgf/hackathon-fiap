@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { BusinessRuleViolationException, IUseCase } from "@app/shared"; // Assumindo uma interface IUseCase
+import { BusinessRuleViolationException, IUseCase } from "@app/shared";
 import { UploadVideoDto, UploadVideoResponseDto } from "./upload-video.dto";
 import { IVideoRepository } from "../../../domain/repositories/video.repository.interface";
 import { v4 as uuidv4 } from "uuid";
@@ -24,9 +24,9 @@ export class UploadVideoUseCase
     private readonly videoRepository: IVideoRepository,
     @Inject("IFileStorageService")
     private readonly fileStorageService: IFileStorageService,
-    @Inject("IUserServiceClient") // A nova dependência
+    @Inject("IUserServiceClient")
     private readonly userServiceClient: IUserServiceClient,
-    private readonly queueService: QueueService, // Injete o QueueService
+    private readonly queueService: QueueService,
   ) {}
 
   async execute(request: UploadVideoRequest): Promise<UploadVideoResponseDto> {

@@ -1,5 +1,3 @@
-// apps/user-service/src/auth/internal-auth.guard.ts
-
 import {
   Injectable,
   CanActivate,
@@ -14,7 +12,7 @@ export class InternalAuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const headerToken = request.headers["x-internal-token"]; // Usaremos um cabeçalho customizado
+    const headerToken = request.headers["x-internal-token"];
 
     const expectedToken = this.configService.get<string>(
       "INTERNAL_SERVICE_TOKEN",
