@@ -54,22 +54,18 @@ export class FileStorageService implements IFileStorageService {
       );
     }
 
-    // A MUDANÇA ESTÁ AQUI: Nós vamos "promisify" o processo de streaming
     const createZipBuffer = (): Promise<Buffer> => {
       return new Promise((resolve, reject) => {
         const chunks: Buffer[] = [];
 
-        // Escuta por pedaços de dados e os armazena
         archive.on("data", (chunk) => {
           chunks.push(chunk);
         });
 
-        // Quando o stream termina, junta os pedaços em um único buffer
         archive.on("end", () => {
           resolve(Buffer.concat(chunks));
         });
 
-        // Se der erro, rejeita a promise
         archive.on("error", (error) => {
           reject(error);
         });

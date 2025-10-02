@@ -84,8 +84,45 @@ cp .env.example .env
 #### `.env.example`
 
 ```dotenv
-# Configuração do Banco de Dados (PostgreSQL)
+# ===================================================
+#           CONFIGURAÇÕES DOS SERVIÇOS
+# ===================================================
+
+# Portas dos Serviços
+USER_SERVICE_PORT=4001
+VIDEO_SERVICE_PORT=4002
+
+# URL do serviço de usuário (usado por outros serviços para comunicação)
+USER_SERVICE_URL=http://localhost:4001/api/v1
+
+# Token para comunicação segura entre serviços internos
+INTERNAL_SERVICE_TOKEN=gere-um-token-seguro-para-comunicacao-interna
+
+
+# ===================================================
+#                 BANCO DE DADOS
+# ===================================================
+
+# String de conexão do PostgreSQL
 DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase?schema=public"
+
+
+# ===================================================
+#               AUTENTICAÇÃO (JWT)
+# ===================================================
+
+# Segredos para geração dos tokens JWT
+JWT_ACCESS_SECRET=seu-segredo-super-secreto-para-access-token
+JWT_REFRESH_SECRET=seu-outro-segredo-forte-para-refresh-token
+
+# Tempo de expiração dos tokens
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+
+# ===================================================
+#             SERVIÇOS EXTERNOS (AWS & MQ)
+# ===================================================
 
 # Credenciais da AWS (IAM User com permissão para o S3)
 AWS_ACCESS_KEY_ID=SEU_ACCESS_KEY_ID
@@ -94,15 +131,23 @@ AWS_REGION=sua-regiao-aws # ex: us-east-1
 S3_BUCKET_NAME=nome-do-seu-bucket
 
 # Configuração do RabbitMQ
-RABBITMQ_URL=amqp://user:password@localhost:5672
+RABBITMQ_URL=amqp://guest:guest@localhost:5672
+RABBIT_VIDEO_QUEUE=video_processing_queue
 
-# Segredos da Aplicação
-JWT_SECRET=SEU_SEGREDO_SUPER_SECRETO
-JWT_EXPIRATION=3600s
 
-# Portas dos Serviços
-USER_SERVICE_PORT=4001
-VIDEO_SERVICE_PORT=4002
+# ===================================================
+#                CONFIGURAÇÃO DE E-MAIL
+# ===================================================
+
+# Configurações do servidor SMTP para envio de e-mails
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+EMAIL_USER=user@example.com
+EMAIL_PASS=sua-senha-de-email
+EMAIL_FROM="Seu Nome <noreply@example.com>"
+
+# Senha de App do Google (se estiver usando o SMTP do Gmail)
+GOOGLE_APP_PASSWORD=sua-senha-de-app-do-google
 ```
 
 ### 3\. Subir a Infraestrutura
